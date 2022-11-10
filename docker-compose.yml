@@ -1,0 +1,34 @@
+version: '3'
+services:
+  app:
+    image: zebrand:latest
+    container_name: zebrand-back
+    restart: unless-stopped
+    tty: true
+    volumes:
+      - ./app:/app
+    ports:
+      - "80:80"
+    depends_on:
+      - zebrand-mysql
+    environment:
+      TZ: "America/Mexico_City"
+      HOSTZEBRAND: $HOSTZEBRAND
+      USERZEBRAND: $USERZEBRAND
+      PASSZEBRAND: $PASSZEBRAND
+      BASEZEBRAND: $BASEZEBRAND
+  zebrand-mysql:
+    image: mysql:5.7.29
+    container_name: zebrand-mysql
+    restart: always
+    env_file: .env
+    volumes:
+      - ./mysql-db1:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: $BASEZEBRAND
+      MYSQL_USER: $USERZEBRAND
+      MYSQL_PASSWORD: $PASSZEBRAND
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'True'
+      TZ: 'America/Mexico_City'
+    ports:
+      - '3306:3306'
