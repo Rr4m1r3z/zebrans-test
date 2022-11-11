@@ -6,6 +6,8 @@ from flask_migrate import Migrate
 from flask_jwt import jwt_required, JWT, current_identity
 
 from controllers.SecurityController import SecurityClass
+from routes.UserRoutes import UserRoutes
+from routes.ProductRoutes import ProductRoutes
 
 app = Flask(__name__)
 db = SQLAlchemy(app)
@@ -13,6 +15,9 @@ db = SQLAlchemy(app)
 db.init_app(app)
 app.config.from_object('config')
 migrate = Migrate(app, db)
+
+app.register_blueprint(UserRoutes, url_prefix='/user')
+app.register_blueprint(ProductRoutes, url_prefix='/product')
 
 jwt = JWT(app, SecurityClass.authenticate, SecurityClass.identity)
 
