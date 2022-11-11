@@ -51,7 +51,8 @@ class UserSchema(Schema):
 				r"[a-zA-Z0-9]*$",
 				error="Password must not contain special characters")
 		])
-	status = fields.Integer(required=True,validate=validate.Range(min=1, max=1))
+	status = fields.Integer(required=True,validate=validate.OneOf([0,1]))
+
 
 class UserUpdateSchema(Schema):
 	iduser = fields.String(required=True,
@@ -64,7 +65,7 @@ class UserUpdateSchema(Schema):
 				r"[a-zA-Z0-9]*$",
 				error="IDuser must not contain special characters")
 		])
-	idrol = fields.Integer(required=True,validate=validate.Range(min=1, max=1))
+	idrol = fields.Integer(required=True,validate=validate.OneOf([1,2]))
 	name = fields.String(required=True,
 		validate=[
 			validate.Length(
@@ -98,4 +99,4 @@ class UserUpdateSchema(Schema):
 				error="Msurname must not contain special characters"
 				"(except _ and -)")
 		])
-	status = fields.Integer(required=True,validate=validate.Range(min=1, max=1))
+	email = fields.Str(required=True, validate=validate.Email(error="Not a valid email address"))

@@ -1,26 +1,27 @@
 import os
 import uuid
-import smtplib
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from flask_jwt import jwt_required, current_identity
 from flask import request, abort, make_response, jsonify
 
-from sqlalchemy.exc import OperationalError, PendingRollbackError, DataError, IntegrityError, NoResultFound
+import smtplib
+from email.mime.text import MIMEText
 from marshmallow import ValidationError
+from email.mime.multipart import MIMEMultipart
 from marshmallow.exceptions import ValidationError
+from flask_jwt import jwt_required, current_identity
+from sqlalchemy.exc import OperationalError, PendingRollbackError, DataError, IntegrityError, NoResultFound
 
 from models.Schema import Product, User, Track
-from validations.ProductValidation import ProductSchema, ProductUpdateSchema, ProductIdSchema
 from helper.PermissionsHelper import HelperClass
+from validations.ProductValidation import ProductSchema, ProductUpdateSchema, ProductIdSchema
 
 class ProductClass():
 
 	@jwt_required()
 	def show(product_id):
+
 		try:
 			ProductIdSchema().load({"idproduct":product_id})
-			session=Product.session
+			session = Product.session
 
 			product = session.query(Product).filter(
 						Product.idproduct == product_id
@@ -31,7 +32,10 @@ class ProductClass():
 
 			return product.serialize
 
-		except (OperationalError, PendingRollbackError, DataError, ValidationError, TypeError, NoResultFound, AttributeError) as inst:
+		except (OperationalError, PendingRollbackError,
+				DataError, ValidationError,
+				TypeError, NoResultFound,
+				AttributeError) as inst:
 			print(type(inst), (inst.args), (inst))
 			abort(make_response(jsonify(
 				description="Something went wrong, please contact to the administrator",
@@ -47,21 +51,22 @@ class ProductClass():
 
 	@jwt_required()
 	def save():
+
 		try:
-			data=request.get_json()
+			data = request.get_json()
 			ProductSchema().load(data)
-			session=Product.session
+			session = Product.session
 
 			if HelperClass.check(current_identity.idrol):
 
-				insert=Product(
-						idproduct=uuid.uuid4().hex,
-						idbrand=data['idbrand'],
-						sku=data['sku'],
-						name=data['name'],
-						price=data['price'])
+				insert = Product(
+						idproduct = uuid.uuid4().hex,
+						idbrand = data['idbrand'],
+						sku = data['sku'],
+						name = data['name'],
+						price = data['price'])
 
-				idProduct=insert.idproduct
+				idProduct = insert.idproduct
 
 				session.add(insert)
 				session.commit()
@@ -78,7 +83,9 @@ class ProductClass():
 					description="Insufficient permissions",
 					status_code=401), 401))
 
-		except (OperationalError, PendingRollbackError, DataError, ValidationError, TypeError) as inst:
+		except (OperationalError, PendingRollbackError,
+				DataError, ValidationError,
+				TypeError) as inst:
 			print(type(inst), (inst.args), (inst))
 			abort(make_response(jsonify(
 				description="Something went wrong, please contact to the administrator",
@@ -96,9 +103,9 @@ class ProductClass():
 	def update():
 
 		try:
-			data=request.get_json()
+			data = request.get_json()
 			ProductUpdateSchema().load(data)
-			session=Product.session
+			session = Product.session
 
 			if HelperClass.check(current_identity.idrol):
 
@@ -108,10 +115,10 @@ class ProductClass():
 
 				if product:
 
-					product.idbrand=data['idbrand']
-					product.sku=data['sku']
-					product.name=data['name']
-					product.price=data['price']
+					product.idbrand = data['idbrand']
+					product.sku = data['sku']
+					product.name = data['name']
+					product.price = data['price']
 
 					session.add(product)
 					session.commit()
@@ -131,7 +138,9 @@ class ProductClass():
 					description="Insufficient permissions",
 					status_code=401), 401))
 
-		except (OperationalError, PendingRollbackError, DataError, ValidationError, TypeError, NoResultFound) as inst:
+		except (OperationalError, PendingRollbackError,
+				DataError, ValidationError,
+				TypeError, NoResultFound) as inst:
 			print(type(inst), (inst.args), (inst))
 			abort(make_response(jsonify(
 				description="Something went wrong, please contact to the administrator",
@@ -149,13 +158,14 @@ class ProductClass():
 	def delete():
 
 		try:
-			data=request.get_json()
+			data = request.get_json()
 			ProductIdSchema().load(data)
-			session=Product.session
+			session = Product.session
 
 			if HelperClass.check(current_identity.idrol):
 
-				result=session.query(Product).filter(Product.idproduct == data['idproduct']).delete()
+				result = session.query(Product).filter(
+					Product.idproduct == data['idproduct']).delete()
 				session.commit()
 				session.close()
 
@@ -172,12 +182,21 @@ class ProductClass():
 						description="Product not found",
 						status_code=401), 401))
 
-		except (OperationalError, PendingRollbackError, DataError, ValidationError, TypeError, NoResultFound) as inst:
+			else:
+				abort(make_response(jsonify(
+					description="Insufficient permissions",
+					status_code=401), 401))
+
+		except (OperationalError, PendingRollbackError,
+				DataError, ValidationError,
+				TypeError, NoResultFound) as inst:
+
 			print(type(inst), (inst.args), (inst))
 			abort(make_response(jsonify(
 				description="Something went wrong, please contact to the administrator",
 				error="Error",
 				status_code=401), 401))
+
 		except (IntegrityError) as e:
 			session.rollback()
 			errorInfo = e.orig.args
@@ -189,21 +208,21 @@ class ProductClass():
 	@jwt_required()
 	def __sent_email(idRemitente,action,idProduct):
 
-		session=User.session
+		session = User.session
 		users = session.query(User).filter(
 						User.idrol == 1
 						).all()
 
-		destinatarios=''
+		destinatarios = ''
 		for user in users:
-			destinatarios+=user.name+' <'+user.email+'>,'
+			destinatarios += user.name + ' <' + user.email + '>,'
 
 		remitter = os.environ['EMAIL']
-		addressee=destinatarios[:-1]
+		addressee = destinatarios[:-1]
 		asunto = "Nuevo movimiento en el catalogo de productos"
 		body = """Buen día!<br/> <br/>
 		Se informa que el usuario <b>%s</b> a <b>%s</b> el registro con ID <b>%s</b>
-		"""%(user.name+' '+user.psurname+' '+user.msurname,action,idProduct)
+		"""%(user.name + ' ' + user.psurname + ' ' + user.msurname,action,idProduct)
 
 		msg = MIMEMultipart()
 		msg['From'] = remitter
@@ -223,11 +242,11 @@ class ProductClass():
 	@jwt_required()
 	def __log(idUser,idProduct):
 
-		session=Track.session
+		session = Track.session
 
-		insert=Track(
-				iduser=idUser,
-				idproduct=idProduct)
+		insert = Track(
+				iduser = idUser,
+				idproduct = idProduct)
 
 		session.add(insert)
 		session.commit()

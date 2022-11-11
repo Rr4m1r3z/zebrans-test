@@ -55,6 +55,7 @@ class User(Base):
 	Session=sessionmaker(engine)
 	session=Session()
 
+
 class Rol(Base):
 	__tablename__='rol'
 
@@ -75,6 +76,7 @@ class Rol(Base):
 
 	Session=sessionmaker(engine)
 	session=Session()
+
 
 class Product(Base):
 	__tablename__='product'
@@ -105,6 +107,7 @@ class Product(Base):
 	Session=sessionmaker(engine)
 	session=Session()
 
+
 class Brand(Base):
 	__tablename__='brand'
 
@@ -124,6 +127,7 @@ class Brand(Base):
 
 	Session=sessionmaker(engine)
 	session=Session()
+
 
 class Track(Base):
 	__tablename__='track'

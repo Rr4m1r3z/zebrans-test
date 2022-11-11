@@ -5,10 +5,9 @@ class HelperClass():
 
     @jwt_required()
     def check(data):
+
         try:
-
             return True if data == 1 else False
-
         except Exception as inst:
             print(type(inst), (inst.args), (inst))
             abort(make_response(jsonify(description="Something went wrong, please contact to the administrator",
