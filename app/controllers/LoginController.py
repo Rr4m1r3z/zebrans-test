@@ -7,6 +7,7 @@ from flask import make_response
 
 class LoginClass(object):
     def __init__(self,iduser,idrol,name, username,password):
+
         self.id = iduser
         self.idrol = idrol
         self.name = name
@@ -26,7 +27,8 @@ class LoginClass(object):
                 User.email,
                 User.password
             ).filter(
-                User.email == username
+                User.email == username,
+                User.status == 1
             ).one()
 
             if row:
@@ -59,7 +61,8 @@ class LoginClass(object):
                 User.email,
                 User.password
             ).filter(
-                User.iduser == idUser
+                User.iduser == idUser,
+                User.status == 1
             ).one()
 
             if row:
@@ -77,6 +80,7 @@ class LoginClass(object):
 
     @classmethod
     def check_jwt(jwt):
+
         try:
             session = User.session
 

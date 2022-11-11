@@ -27,6 +27,7 @@ class ProductSchema(Schema):
 		])
 	price=fields.Float(allow_none=True)
 
+
 class ProductUpdateSchema(ProductSchema):
 
 	idproduct=fields.String(
@@ -40,6 +41,7 @@ class ProductUpdateSchema(ProductSchema):
 				r"[a-zA-Z0-9]*$",
 				error="Id must not contain special characters")
 		])
+
 
 class ProductIdSchema(Schema):
 

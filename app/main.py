@@ -7,6 +7,7 @@ from flask_jwt import jwt_required, JWT, current_identity
 
 from controllers.SecurityController import SecurityClass
 from routes.UserRoutes import UserRoutes
+from routes.SearchRoutes import SearchRoutes
 from routes.ProductRoutes import ProductRoutes
 
 app = Flask(__name__)
@@ -17,6 +18,7 @@ app.config.from_object('config')
 migrate = Migrate(app, db)
 
 app.register_blueprint(UserRoutes, url_prefix='/user')
+app.register_blueprint(SearchRoutes, url_prefix='/search')
 app.register_blueprint(ProductRoutes, url_prefix='/product')
 
 jwt = JWT(app, SecurityClass.authenticate, SecurityClass.identity)

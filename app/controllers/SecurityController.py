@@ -22,5 +22,6 @@ class SecurityClass():
 				status_code=401), 401))
 
 	def identity(payload):
+
 		user_id = payload['identity']
 		return LoginClass.find_by_id(str(user_id))
