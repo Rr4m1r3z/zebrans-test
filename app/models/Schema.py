@@ -7,7 +7,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Date, engine, Numeric
 from sqlalchemy.dialects.mysql import TINYTEXT
 
-from config import config
+import config
 
 conf = config.SQLALCHEMY_DATABASE_URI
 engine = create_engine(conf)
@@ -83,7 +83,7 @@ class Product(Base):
 	idbrand=Column(Integer(), ForeignKey('brand.idbrand'))
 	sku=Column(String(12), unique=True)
 	name=Column(String(55), unique=True)
-	price=Column(Numeric(4,2))
+	price=Column(Numeric(5,2))
 
 	def __init__(self, idproduct=None, idbrand=None, sku=None, name=None, price=None):
 		self.idproduct=idproduct
@@ -108,7 +108,7 @@ class Product(Base):
 class Brand(Base):
 	__tablename__='brand'
 
-	idbrand=Column(Integer(), unique=True, Primary_key=True, autoincrement=True)
+	idbrand=Column(Integer(), unique=True, primary_key=True, autoincrement=True)
 	name=Column(String(45), unique=True)
 
 	def __init__(self, idbrand=None, name=None):
@@ -128,7 +128,7 @@ class Brand(Base):
 class Track(Base):
 	__tablename__='track'
 
-	idtrack=Column(Integer(), unique=True, Primary_key=True, autoincrement=True)
+	idtrack=Column(Integer(), unique=True, primary_key=True, autoincrement=True)
 	iduser=Column(String(45), ForeignKey('user.iduser'))
 	idproduct=Column(String(45), ForeignKey('product.idproduct'))
 	created=Column(DateTime, default=datetime.datetime.utcnow)

@@ -14,29 +14,28 @@ class UserClass():
 
     def index():
         try:
-            if request.method == 'POST':
 
-                data = request.get_json()
-                session = User.session
+            data = request.get_json()
+            session = User.session
 
-                users = session.query(
-                    User.iduser,
-                    User.idrol,
-                    User.name,
-                    User.email,
-                    User.password
-                ).filter(
-                    User.email == data['username']
-                ).one()
+            users = session.query(
+                User.iduser,
+                User.idrol,
+                User.name,
+                User.email,
+                User.password
+            ).filter(
+                User.email == data['username']
+            ).one()
 
-                for data_user in users:
-                    data_password = data_user.password
+            for data_user in users:
+                data_password = data_user.password
 
-                password = hashlib.md5( bytes('{}'.format(data['password']),'utf-8') )
-                if data['username'] and safe_str_cmp(data_user.password,password.hexdigest()):
-                    return data_user.name
-                else:
-                    abort(make_response(jsonify(message="Invalid credentials"), 401))
+            password = hashlib.md5( bytes('{}'.format(data['password']),'utf-8') )
+            if data['username'] and safe_str_cmp(data_user.password,password.hexdigest()):
+                return data_user.name
+            else:
+                abort(make_response(jsonify(message="Invalid credentials"), 401))
 
         except ValidationError as e:
             return jsonify(e)

@@ -4,9 +4,7 @@ from controllers.LoginController import LoginClass
 from flask import abort, make_response, jsonify
 
 class SecurityClass():
-	#################################################
-	#### ver como poner unos try en esta sección ####
-	#################################################
+
 	def authenticate(username,password):
 
 		username = username.strip()
